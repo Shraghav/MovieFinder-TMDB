@@ -1,17 +1,21 @@
-import {
-  View,
-  Text,
-  Image,
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { icons } from "@/constants/icons";
-import useFetch from "@/services/usefetch";
 import { fetchMovieDetails } from "@/services/api";
+import { saveMovie } from "@/services/appwrite";
+import useFetch from "@/services/usefetch";
+import { toggleSavedId } from "@/store/SavedSlice";
+import { AppDispatch, RootState } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
 
 interface MovieInfoProps {
   label: string;
@@ -30,10 +34,41 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 const Details = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // 1. Get the list of IDs from Redux
+  const savedIds = useSelector((state: RootState) => state.saved.savedIds);
+
+  // 2. Check if currently saved
+  const isSaved = savedIds.includes(id?.toString());
+
+  const handleToggleSave = async () => {
+    const movieId = id?.toString();
+    // 3. Update Redux (UI updates instantly)
+    dispatch(toggleSavedId(movieId));
+
+    try {
+      await saveMovie(savedMovie);
+    } catch (error) {
+      // 4. Rollback Redux if DB call fails
+      dispatch(toggleSavedId(movieId));
+      console.error("Database sync failed");
+    }
+  };
 
   const { data: movie, loading } = useFetch(() =>
     fetchMovieDetails(id as string)
   );
+
+  const savedMovie: SavedMovies = {
+    movie_title: movie?.title!,
+    poster_url: movie?.poster_path!,
+    year: movie?.release_date!,
+    runtime: movie?.runtime!,
+    movie_id: movie?.id!,
+    isDelete: !isSaved
+  }
+
 
   if (loading)
     return (
@@ -82,8 +117,11 @@ const Details = () => {
             <Text className="text-light-200 text-sm">
               ({movie?.vote_count} votes)
             </Text>
-          </View>
 
+          </View>
+          <TouchableOpacity className="absolute right-12 top-5" onPress={handleToggleSave}>
+            <Image style={{ tintColor: isSaved ? '#FFD700' : '#FFFFFF' }} source={icons.save} className="size-7" />
+          </TouchableOpacity>
           <MovieInfo label="Overview" value={movie?.overview} />
           <MovieInfo
             label="Genres"
@@ -111,6 +149,7 @@ const Details = () => {
             }
           />
         </View>
+
       </ScrollView>
 
       <TouchableOpacity

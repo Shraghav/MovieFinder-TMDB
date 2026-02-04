@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, FlatList, Image } from "react-native";
+import { View, Text, ActivityIndicator, FlatList, Image, SafeAreaView } from "react-native";
 
 import { images } from "@/constants/images";
 import { icons } from "@/constants/icons";
@@ -46,7 +46,7 @@ const Search = () => {
     }
   }, [movies])
   return (
-    <View className="flex-1 bg-primary">
+    <SafeAreaView className="flex-1 bg-primary">
       <Image
         source={images.bg}
         className="flex-1 absolute w-full z-0"
@@ -116,7 +116,7 @@ const Search = () => {
           ) : null
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

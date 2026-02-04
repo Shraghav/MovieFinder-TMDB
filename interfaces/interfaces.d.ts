@@ -23,6 +23,16 @@ interface TrendingMovie {
   poster_url: string;
 }
 
+interface SavedMovies {
+  movie_id: number;
+  movie_title: string;
+  poster_url: string;
+  year: string;
+  runtime: number;
+  isDelete:boolean
+}
+
+interface 
 interface MovieDetails {
   adult: boolean;
   backdrop_path: string | null;
@@ -69,9 +79,15 @@ interface MovieDetails {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  is_saved: boolean;
 }
 
 interface TrendingCardProps {
   movie: TrendingMovie;
   index: number;
 }
+
+interface SavedMovieCardProps{
+  movie:SavedMovies
+}
+

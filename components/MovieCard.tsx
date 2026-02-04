@@ -30,7 +30,7 @@ const MovieCard = ({
         <View className="flex-row items-center justify-start gap-x-1">
           <Image source={icons.star} className="size-4" />
           <Text className="text-xs text-white font-bold uppercase">
-            {Math.round(vote_average / 2)}
+            {Math.round(vote_average)}/10
           </Text>
         </View>
 
@@ -38,9 +38,7 @@ const MovieCard = ({
           <Text className="text-xs text-light-300 font-medium mt-1">
             {release_date?.split("-")[0]}
           </Text>
-          <Text className="text-xs font-medium text-light-300 uppercase">
-            Movie
-          </Text>
+        
         </View>
       </TouchableOpacity>
     </Link>
