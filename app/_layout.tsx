@@ -7,7 +7,6 @@ export default function RootLayout() {
   return (
     <Provider store={store} >
       <StatusBar hidden={true} />
-
       <Stack>
         <Stack.Screen
           name="(tabs)"
